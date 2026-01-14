@@ -11,11 +11,10 @@ const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏']
 interface MessageItemProps {
   message: Message
   isOwn: boolean
-  showAvatar: boolean
   showTimestamp: boolean
 }
 
-const MessageItem = ({ message, isOwn, showAvatar, showTimestamp }: MessageItemProps) => {
+const MessageItem = ({ message, isOwn, showTimestamp }: MessageItemProps) => {
   const { user } = useUserMetadata(message.senderId)
   const { toggleReaction } = useReactions(message.channel || 'general')
   const [showReactions, setShowReactions] = useState(false)

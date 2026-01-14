@@ -1,10 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { RootState } from '../store/slices/chatSlice'
+import { RootState } from '../store/store'
+import { Message } from '../store/slices/chatSlice'
 import { useMessages } from '../hooks/useMessages'
-import { useUserMetadata } from '../hooks/usePubNubObjects'
 import MessageItem from './MessageItem'
-import { format } from 'date-fns'
 
 const MessageList = ({ channel }: { channel: string }) => {
   const messages = useSelector((state: RootState) => state.chat.messages[channel] || [])
@@ -17,8 +16,8 @@ const MessageList = ({ channel }: { channel: string }) => {
   }, [messages])
 
   // Deduplicate messages by messageId
-  const uniqueMessages = messages.filter((msg, index, self) =>
-    index === self.findIndex((m) => m.messageId === msg.messageId)
+  const uniqueMessages = messages.filter((msg: Message, index: number, self: Message[]) =>
+    index === self.findIndex((m: Message) => m.messageId === msg.messageId)
   )
 
   return (
@@ -36,11 +35,8 @@ const MessageList = ({ channel }: { channel: string }) => {
           </div>
         ) : (
           <div className="space-y-1">
-            {uniqueMessages.map((message, index) => {
+            {uniqueMessages.map((message: Message, index: number) => {
               const prevMessage = index > 0 ? uniqueMessages[index - 1] : null
-              
-              // Check if previous message is from same sender
-              const isSameSender = prevMessage && prevMessage.senderId === message.senderId
               
               // Calculate time difference
               const timeDiff = prevMessage
@@ -50,9 +46,6 @@ const MessageList = ({ channel }: { channel: string }) => {
                   )
                 : Infinity
               
-              // Show avatar for all messages
-              const showAvatar = true
-              
               // Show timestamp if: first message or more than 5 minutes passed
               const showTimestamp = index === 0 || timeDiff > 300000
 
@@ -61,7 +54,6 @@ const MessageList = ({ channel }: { channel: string }) => {
                   key={`${message.messageId}-${index}`}
                   message={message}
                   isOwn={message.senderId === currentUser?.id}
-                  showAvatar={showAvatar}
                   showTimestamp={showTimestamp}
                 />
               )

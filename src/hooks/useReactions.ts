@@ -18,7 +18,7 @@ export const useReactions = (channel: string) => {
 
     const handleReaction = (event: any) => {
       if (event.channel === reactionChannel && event.message.type === 'reaction') {
-        const { messageId, emoji, action, userId, reactions } = event.message
+        const { messageId, emoji, action, userId } = event.message
 
         if (action === 'add') {
           dispatch(addReaction({ channel, messageId, userId, emoji }))
