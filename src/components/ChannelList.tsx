@@ -3,6 +3,7 @@ import { RootState } from '../store/store'
 import { setActiveChannel } from '../store/slices/chatSlice'
 import { useChannels, useUserChannels } from '../hooks/usePubNubObjects'
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 
 const ChannelList = ({ channels }: { channels: any[] }) => {
   const dispatch = useDispatch()
@@ -88,44 +89,47 @@ const ChannelList = ({ channels }: { channels: any[] }) => {
         </div>
       </div>
 
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md shadow-2xl border border-gray-200/50 dark:border-gray-700/50">
-            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">Create New Channel</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Start a new conversation channel</p>
-            <input
-              type="text"
-              value={newChannelName}
-              onChange={(e) => setNewChannelName(e.target.value)}
-              placeholder="e.g., general, random, support"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl mb-4 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-              autoFocus
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleCreateChannel()
-                }
-              }}
-            />
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => {
-                  setShowCreateModal(false)
-                  setNewChannelName('')
+      {showCreateModal &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-[1000] p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md shadow-2xl border border-gray-200/50 dark:border-gray-700/50">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">Create New Channel</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Start a new conversation channel</p>
+              <input
+                type="text"
+                value={newChannelName}
+                onChange={(e) => setNewChannelName(e.target.value)}
+                placeholder="e.g., general, random, support"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl mb-4 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                autoFocus
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCreateChannel()
+                  }
                 }}
-                className="px-5 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreateChannel}
-                className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg font-medium"
-              >
-                Create Channel
-              </button>
+              />
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    setShowCreateModal(false)
+                    setNewChannelName('')
+                  }}
+                  className="px-5 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateChannel}
+                  className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg font-medium"
+                >
+                  Create Channel
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   )
 }
